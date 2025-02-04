@@ -147,10 +147,10 @@ function getRandomDepositAmount() {
 function getTokenContractAddress(tokenType) {
   if (tokenType === 0) {
     // bondETH
-    return "0x1aC493C87a483518642f320Ba5b342c7b78154ED";
+    return "0x5Bd36745f6199CF32d2465Ef1F8D6c51dCA9BdEE";
   } else if (tokenType === 1) {
     // levETH
-    return "0x975f67319f9DA83B403309108d4a8f84031538A6";
+    return "0x98f665D98a046fB81147879eCBE9A6fF68BC276C";
   }
   
 }
