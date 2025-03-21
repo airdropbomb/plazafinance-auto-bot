@@ -25,7 +25,7 @@ Required Node.js modules: web3, axios, chalk, fs
 Install the required modules using the following command:
 
 ```bash
-npm install web3@1.8.0 axios chalk@2 fs
+npm install web3@1.8.0 axios chalk fs https-proxy-agent
 ```
 
 Clone the repository:
