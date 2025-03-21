@@ -255,13 +255,16 @@ function readProxies() {
     }
 }
 
-function printHeader() {
-    const _0x1c763e = _0x10d952;
-    console['log'](chalk['cyan']['bold']('='.repeat(0x32)));
-    console[_0x1c763e(0x10a)](chalk['cyan']['bold']('Plaza Finance Automation'.padStart(0x23)));
-    console[_0x1c763e(0x10a)](chalk[_0x1c763e(0x8b)]('Follow X: https://x.com/qklxsqf'.padStart(0x28)));
-    console[_0x1c763e(0x10a)](chalk[_0x1c763e(0xd3)]['bold']('='.repeat(0x32)));
-}
+// Banner
+console.log(`
+       █████╗ ██████╗ ██████╗     ███╗   ██╗ ██████╗ ██████╗ ███████╗
+      ██╔══██╗██╔══██╗██╔══██╗    ████╗  ██║██╔═══██╗██╔══██╗██╔════╝
+      ███████║██║  ██║██████╔╝    ██╔██╗ ██║██║   ██║██║  ██║█████╗  
+      ██╔══██║██║  ██║██╔══██╗    ██║╚██╗██║██║   ██║██║  ██║██╔══╝  
+      ██║  ██║██████╔╝██████╔╝    ██║ ╚████║╚██████╔╝██████╔╝███████╗
+      ╚═╝  ╚═╝╚═════╝ ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝  
+        By : ADB NODE
+`);
 
 async function processWallets() {
     const _0x2db201 = _0x10d952,
