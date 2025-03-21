@@ -15,7 +15,6 @@ const Web3 = require(_0x10d952(0xdf)),
     axios = require('axios'),
     chalk = require(_0x10d952(0x103)),
     fs = require('fs'),
-    { HttpsProxyAgent } = require(_0x10d952(0xc5)),
     web3 = new Web3(_0x10d952(0x9d)),
     useProxy = ![],
     routerAddress = _0x10d952(0x115),
@@ -32,6 +31,11 @@ const Web3 = require(_0x10d952(0xdf)),
     assets = [balancerpool, cbETHaddress, wstETHaddress],
     balancerPoolId = '0x07124296362d9e92a7105dc40d7e20e909ccabd6000100000000000000000016',
     erc20Abi = [{'constant': !![], 'inputs': [{'name': _0x10d952(0x94), 'type': 'address'}, {'name': _0x10d952(0x97), 'type': _0x10d952(0xc8)}], 'name': _0x10d952(0x8e), 'outputs': [{'name': _0x10d952(0xfe), 'type': _0x10d952(0xcc)}], 'type': _0x10d952(0xd9)}, {'constant': ![], 'inputs': [{'name': _0x10d952(0x97), 'type': 'address'}, {'name': _0x10d952(0xc4), 'type': _0x10d952(0xcc)}], 'name': _0x10d952(0x96), 'outputs': [{'name': _0x10d952(0x104), 'type': _0x10d952(0xad)}], 'type': _0x10d952(0xd9)}, {'constant': !![], 'inputs': [{'name': _0x10d952(0x94), 'type': _0x10d952(0xc8)}], 'name': _0x10d952(0xff), 'outputs': [{'name': _0x10d952(0x11a), 'type': 'uint256'}], 'type': _0x10d952(0xd9)}];
+
+let HttpsProxyAgent;
+if (useProxy) {
+    HttpsProxyAgent = require('https-proxy-agent').HttpsProxyAgent;
+}
 
 function _0x71dd(_0x145f5e, _0x5d0c8b) {
     const _0x2297d9 = _0x2297();
@@ -53,7 +57,7 @@ async function ensureTokenAllowance(_0x19d099, _0x4039a1, _0x53651a, _0x2fe948) 
             const _0x253563 = await _0x4ea240['methods'][_0x192da7(0x8e)](_0x2656a6, _0x53651a)[_0x192da7(0xde)](),
                 _0x47f0f0 = web3['utils'][_0x192da7(0x105)](_0x192da7(0x9c));
             if (web3['utils']['toBN'](_0x253563)['lt'](_0x47f0f0)) {
-                console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)]('正在为第 ' + _0x2eef03 + ' 次尝试设置 ' + _0x2fe948 + ' 的授权...'));
+                console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)]('Setting allowance for ' + _0x2fe948 + ' on attempt ' + _0x2eef03 + '...'));
                 const _0x13ae63 = _0x4ea240[_0x192da7(0xf9)][_0x192da7(0x96)](_0x53651a, _0x47f0f0[_0x192da7(0xcb)]()),
                     _0x473b36 = await _0x13ae63[_0x192da7(0xf4)]({ 'from': _0x2656a6 }),
                     _0x28526c = await web3['eth'][_0x192da7(0xa2)](_0x2656a6),
@@ -66,17 +70,17 @@ async function ensureTokenAllowance(_0x19d099, _0x4039a1, _0x53651a, _0x2fe948) 
                     },
                     _0x205a38 = await web3[_0x192da7(0xd6)]['accounts'][_0x192da7(0xfa)](_0x17a1f5, _0x19d099),
                     _0x190bb0 = await web3[_0x192da7(0xd6)][_0x192da7(0xa7)](_0x205a38[_0x192da7(0x116)]);
-                console[_0x192da7(0x10a)](chalk['green']('已为 ' + _0x2fe948 + ' 设置授权: ' + _0x190bb0['transactionHash']));
+                console[_0x192da7(0x10a)](chalk['green']('Allowance set for ' + _0x2fe948 + ': ' + _0x190bb0['transactionHash']));
                 return;
             }
-            console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)](_0x2fe948 + ' 的授权已无限制'));
+            console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)](_0x2fe948 + ' allowance already unlimited'));
             return;
         } catch (_0x1d27aa) {
-            console['error'](chalk[_0x192da7(0x11f)]('授权错误（第 ' + _0x2eef03 + ' 次尝试）: ' + _0x1d27aa[_0x192da7(0xb5)]));
+            console['error'](chalk[_0x192da7(0x11f)]('Allowance error (attempt ' + _0x2eef03 + '): ' + _0x1d27aa[_0x192da7(0xb5)]));
             if (_0x2eef03 < _0x435383) await new Promise(_0x700e0a => setTimeout(_0x700e0a, 0x1388));
         }
     }
-    throw new Error('在 ' + _0x435383 + ' 次尝试后未能设置授权');
+    throw new Error('Failed to set allowance after ' + _0x435383 + ' attempts');
 }
 
 async function claimFaucet(_0xdbab40, _0x11a90b) {
@@ -89,12 +93,15 @@ async function claimFaucet(_0xdbab40, _0x11a90b) {
                 'x-plaza-api-key': _0x3ac664(0xd0)
             }
         };
-        useProxy && _0x11a90b && (_0x4eb24d[_0x3ac664(0xa9)] = new HttpsProxyAgent(_0x11a90b), console[_0x3ac664(0x10a)](chalk[_0x3ac664(0xe0)]('使用代理: ' + _0x11a90b)));
+        if (useProxy && _0x11a90b && HttpsProxyAgent) {
+            _0x4eb24d[_0x3ac664(0xa9)] = new HttpsProxyAgent(_0x11a90b);
+            console[_0x3ac664(0x10a)](chalk[_0x3ac664(0xe0)]('Using proxy: ' + _0x11a90b));
+        }
         const _0x3a8191 = await axios[_0x3ac664(0xd5)](_0x3ac664(0xf1), { 'address': _0xdbab40 }, _0x4eb24d);
-        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x8b)]('已为 ' + _0xdbab40 + ' 领取水龙头'));
-        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x128)]('响应:', JSON[_0x3ac664(0xa4)](_0x3a8191[_0x3ac664(0xca)], null, 0x2)));
+        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x8b)]('Faucet claimed for ' + _0xdbab40));
+        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x128)]('Response:', JSON[_0x3ac664(0xa4)](_0x3a8191[_0x3ac664(0xca)], null, 0x2)));
     } catch (_0x3cbe71) {
-        console[_0x3ac664(0xa5)](chalk[_0x3ac664(0x11f)]('水龙头领取错误: ' + (_0x3cbe71[_0x3ac664(0x99)]?.[_0x3ac664(0xca)]?.['message'] || _0x3cbe71['message'])));
+        console[_0x3ac664(0xa5)](chalk[_0x3ac664(0x11f)]('Faucet claim error: ' + (_0x3cbe71[_0x3ac664(0x99)]?.[_0x3ac664(0xca)]?.['message'] || _0x3cbe71['message'])));
     }
 }
 
@@ -122,14 +129,14 @@ async function createPosition(_0x5229ee, _0x1fe7bc, _0x294126) {
                 },
                 _0x32e43c = await web3[_0x3f8e59(0xd6)][_0x3f8e59(0xa0)]['signTransaction'](_0x9c7b63, _0x5229ee),
                 _0x34089d = await web3[_0x3f8e59(0xd6)]['sendSignedTransaction'](_0x32e43c[_0x3f8e59(0x116)]);
-            console[_0x3f8e59(0x10a)](chalk[_0x3f8e59(0x8b)]('创建成功: ' + _0x34089d[_0x3f8e59(0xbc)]));
+            console[_0x3f8e59(0x10a)](chalk[_0x3f8e59(0x8b)]('Create success: ' + _0x34089d[_0x3f8e59(0xbc)]));
             return;
         } catch (_0x2103c8) {
-            console[_0x3f8e59(0xa5)](chalk[_0x3f8e59(0x11f)]('创建失败（第 ' + _0x2c240e + ' 次尝试）: ' + _0x2103c8['message']));
+            console[_0x3f8e59(0xa5)](chalk[_0x3f8e59(0x11f)]('Create failed (attempt ' + _0x2c240e + '): ' + _0x2103c8['message']));
             if (_0x2c240e < _0x12e48f) await new Promise(_0x3e1d1d => setTimeout(_0x3e1d1d, 0x3a98));
         }
     }
-    throw new Error('在 ' + _0x12e48f + ' 次尝试后未能创建头寸');
+    throw new Error('Failed to create position after ' + _0x12e48f + ' attempts');
 }
 
 async function redeemToken(_0xb199db, _0x1325e1, _0x1c7db2) {
@@ -158,21 +165,21 @@ async function redeemToken(_0xb199db, _0x1325e1, _0x1c7db2) {
                     },
                     _0x4c103a = await web3[_0x4a044f(0xd6)][_0x4a044f(0xa0)]['signTransaction'](_0x1c81ba, _0xb199db),
                     _0x2415a7 = await web3[_0x4a044f(0xd6)]['sendSignedTransaction'](_0x4c103a[_0x4a044f(0x116)]);
-                console[_0x4a044f(0x10a)](chalk[_0x4a044f(0x8b)]('[第 ' + _0x185477 + ' 次尝试] 赎回成功: ' + _0x2415a7['transactionHash']));
+                console[_0x4a044f(0x10a)](chalk[_0x4a044f(0x8b)]('[Attempt ' + _0x185477 + '] Redeem success: ' + _0x2415a7['transactionHash']));
                 return;
             } else {
-                console[_0x4a044f(0x10a)](chalk['yellow']('[第 ' + _0x185477 + ' 次尝试] 代币余额不足，跳过赎回'));
+                console[_0x4a044f(0x10a)](chalk['yellow']('[Attempt ' + _0x185477 + '] Insufficient token balance, skipping redeem'));
                 return;
             }
         } catch (_0xdc2589) {
-            console['error'](chalk[_0x4a044f(0x11f)]('[第 ' + _0x185477 + ' 次尝试] 赎回失败: ' + _0xdc2589[_0x4a044f(0xb5)]));
+            console['error'](chalk[_0x4a044f(0x11f)]('[Attempt ' + _0x185477 + '] Redeem failed: ' + _0xdc2589[_0x4a044f(0xb5)]));
             if (_0x185477 < _0x57e079) {
-                console[_0x4a044f(0x10a)](chalk[_0x4a044f(0x128)]('[第 ' + _0x185477 + ' 次尝试] 15秒后重试...'));
+                console[_0x4a044f(0x10a)](chalk[_0x4a044f(0x128)]('[Attempt ' + _0x185477 + '] Retrying in 15 seconds...'));
                 await new Promise(_0x3468c9 => setTimeout(_0x3468c9, 0x3a98));
             }
         }
     }
-    console[_0x4a044f(0xa5)](chalk[_0x4a044f(0x11f)]('在 ' + _0x57e079 + ' 次尝试后未能赎回'));
+    console[_0x4a044f(0xa5)](chalk[_0x4a044f(0x11f)]('Failed to redeem after ' + _0x57e079 + ' attempts'));
 }
 
 async function claimCouponUSDC(_0xded17d) {
@@ -194,21 +201,21 @@ async function claimCouponUSDC(_0xded17d) {
                 },
                 _0x753db4 = await web3[_0x35fcfb(0xd6)][_0x35fcfb(0xa0)][_0x35fcfb(0xfa)](_0x5cd76b, _0xded17d),
                 _0x3bbab4 = await web3[_0x35fcfb(0xd6)][_0x35fcfb(0xa7)](_0x753db4[_0x35fcfb(0x116)]);
-            console[_0x35fcfb(0x10a)](chalk[_0x35fcfb(0x8b)]('[第 ' + _0x3082e3 + ' 次尝试] 优惠券USDC领取成功: ' + _0x3bbab4[_0x35fcfb(0xbc)]));
+            console[_0x35fcfb(0x10a)](chalk[_0x35fcfb(0x8b)]('[Attempt ' + _0x3082e3 + '] Coupon USDC claim success: ' + _0x3bbab4[_0x35fcfb(0xbc)]));
             const _0x36b103 = await axios[_0x35fcfb(0xd5)](_0x35fcfb(0xfb), [_0x4c1b4b, 0x14a34], { 'headers': { 'Content-Type': _0x35fcfb(0x107) } });
-            console['log'](chalk[_0x35fcfb(0x8b)]('[第 ' + _0x3082e3 + ' 次尝试] 收益请求响应: ' + JSON[_0x35fcfb(0xa4)](_0x36b103[_0x35fcfb(0xca)], null, 0x2)));
+            console['log'](chalk[_0x35fcfb(0x8b)]('[Attempt ' + _0x3082e3 + '] Earn request response: ' + JSON[_0x35fcfb(0xa4)](_0x36b103[_0x35fcfb(0xca)], null, 0x2)));
             return;
         } catch (_0x322b7e) {
             _0x322b7e[_0x35fcfb(0xb5)][_0x35fcfb(0x121)](_0x35fcfb(0xc6)) ?
-                console[_0x35fcfb(0xa5)](chalk['yellow']('[第 ' + _0x3082e3 + ' 次尝试] 执行被回滚: 优惠券领取可能尚未准备好或已被领取。')) :
-                console[_0x35fcfb(0xa5)](chalk[_0x35fcfb(0x11f)]('[第 ' + _0x3082e3 + ' 次尝试] 优惠券领取失败: ' + _0x322b7e['message']));
+                console[_0x35fcfb(0xa5)](chalk['yellow']('[Attempt ' + _0x3082e3 + '] Execution reverted: Coupon claim may not be ready yet or already claimed.')) :
+                console[_0x35fcfb(0xa5)](chalk[_0x35fcfb(0x11f)]('[Attempt ' + _0x3082e3 + '] Coupon claim failed: ' + _0x322b7e['message']));
             if (_0x3082e3 < _0x3feb16) {
-                console['log'](chalk[_0x35fcfb(0x128)]('[第 ' + _0x3082e3 + ' 次尝试] 15秒后重试...'));
+                console['log'](chalk[_0x35fcfb(0x128)]('[Attempt ' + _0x3082e3 + '] Retrying in 15 seconds...'));
                 await new Promise(_0x1a4cd2 => setTimeout(_0x1a4cd2, 0x3a98));
             }
         }
     }
-    console[_0x35fcfb(0xa5)](chalk[_0x35fcfb(0x11f)]('在 ' + _0x3feb16 + ' 次尝试后未能领取USDC优惠券'));
+    console[_0x35fcfb(0xa5)](chalk[_0x35fcfb(0x11f)]('Failed to claim USDC coupon after ' + _0x3feb16 + ' attempts'));
 }
 
 function _0x2297() {
@@ -224,7 +231,7 @@ function readPrivateKeys() {
     try {
         return fs[_0x4cbb1f(0xe5)]('private_keys.txt', _0x4cbb1f(0x10e))[_0x4cbb1f(0xe4)]('\x0a')[_0x4cbb1f(0xa8)](_0x1a48b5 => _0x1a48b5[_0x4cbb1f(0xee)]() !== '')[_0x4cbb1f(0xeb)](_0x46ef5e => _0x46ef5e[_0x4cbb1f(0xee)]());
     } catch (_0x17423e) {
-        console[_0x4cbb1f(0xa5)](chalk[_0x4cbb1f(0x11f)]('读取private_keys.txt出错: ' + _0x17423e[_0x4cbb1f(0xb5)]));
+        console[_0x4cbb1f(0xa5)](chalk[_0x4cbb1f(0x11f)]('Error reading private_keys.txt: ' + _0x17423e[_0x4cbb1f(0xb5)]));
         process[_0x4cbb1f(0xfc)](0x1);
     }
 }
@@ -234,7 +241,7 @@ function readProxies() {
     try {
         return fs[_0x5cfd38(0xe5)](_0x5cfd38(0x91), _0x5cfd38(0x10e))[_0x5cfd38(0xe4)]('\x0a')[_0x5cfd38(0xa8)](_0xcb38a4 => _0xcb38a4[_0x5cfd38(0xee)]() !== '')[_0x5cfd38(0xeb)](_0x4e9b3a => _0x4e9b3a['trim']());
     } catch (_0x2d2ce7) {
-        console[_0x5cfd38(0xa5)](chalk['red']('读取proxies.txt出错: ' + _0x2d2ce7[_0x5cfd38(0xb5)]));
+        console[_0x5cfd38(0xa5)](chalk['red']('Error reading proxies.txt: ' + _0x2d2ce7[_0x5cfd38(0xb5)]));
         process[_0x5cfd38(0xfc)](0x1);
     }
 }
@@ -242,8 +249,8 @@ function readProxies() {
 function printHeader() {
     const _0x1c763e = _0x10d952;
     console['log'](chalk['cyan']['bold']('='.repeat(0x32)));
-    console[_0x1c763e(0x10a)](chalk['cyan']['bold']('Plaza Finance 自动化'.padStart(0x23)));
-    console[_0x1c763e(0x10a)](chalk[_0x1c763e(0x8b)]('关注X: https://x.com/qklxsqf'.padStart(0x28)));
+    console[_0x1c763e(0x10a)](chalk['cyan']['bold']('Plaza Finance Automation'.padStart(0x23)));
+    console[_0x1c763e(0x10a)](chalk[_0x1c763e(0x8b)]('Follow X: https://x.com/qklxsqf'.padStart(0x28)));
     console[_0x1c763e(0x10a)](chalk[_0x1c763e(0xd3)]['bold']('='.repeat(0x32)));
 }
 
@@ -252,39 +259,56 @@ async function processWallets() {
         _0x13a7d1 = readPrivateKeys(),
         _0x1da05b = useProxy ? readProxies() : [];
     printHeader();
-    useProxy && _0x13a7d1['length'] !== _0x1da05b[_0x2db201(0x124)] && (console[_0x2db201(0xa5)](chalk[_0x2db201(0x11f)]('代理和私钥数量不匹配！')), process['exit'](0x1));
+    useProxy && _0x13a7d1['length'] !== _0x1da05b[_0x2db201(0x124)] && (console[_0x2db201(0xa5)](chalk[_0x2db201(0x11f)]('Mismatch between number of proxies and private keys!')), process['exit'](0x1));
     try {
         for (const [_0x333a56, _0x4df269] of _0x13a7d1[_0x2db201(0xe6)]()) {
             const _0x4bb496 = useProxy ? _0x1da05b[_0x333a56] : null,
                 _0x4eaf77 = web3[_0x2db201(0xd6)][_0x2db201(0xa0)][_0x2db201(0xab)](_0x4df269),
                 _0x5a1557 = _0x4eaf77[_0x2db201(0xc8)];
-            console[_0x2db201(0x10a)](chalk['yellow']('\n正在处理钱包 ' + (_0x333a56 + 0x1) + '/' + _0x13a7d1[_0x2db201(0x124)] + ': ' + _0x5a1557));
+            console[_0x2db201(0x10a)](chalk['yellow']('\nProcessing wallet ' + (_0x333a56 + 0x1) + '/' + _0x13a7d1[_0x2db201(0x124)] + ': ' + _0x5a1557));
             try {
                 await claimFaucet(_0x5a1557, _0x4bb496);
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                 await ensureTokenAllowance(_0x4df269, wstETHaddress, routerAddress, _0x2db201(0xc1));
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                 await ensureTokenAllowance(_0x4df269, bondETHaddress, routerAddress, _0x2db201(0xe9));
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                 await ensureTokenAllowance(_0x4df269, levETHaddress, routerAddress, _0x2db201(0x11d));
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                 const _0x487f6a = new web3[(_0x2db201(0xd6))]['Contract'](erc20Abi, wstETHaddress);
                 let _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)[_0x2db201(0xde)](),
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3[_0x2db201(0xf7)][_0x2db201(0x105)]('70'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                 if (_0x15c462['gtn'](0x0)) {
                     await createPosition(_0x4df269, 0x0, _0x15c462);
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                     _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)['call']();
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3['utils'][_0x2db201(0x105)]('20'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                     await createPosition(_0x4df269, 0x1, _0x15c462);
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                     await redeemToken(_0x4df269, bondETHaddress, 0x0);
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                     await redeemToken(_0x4df269, levETHaddress, 0x1);
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+
                     await claimCouponUSDC(_0x4df269);
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
                 } else {
-                    console[_0x2db201(0x10a)](chalk[_0x2db201(0x128)]('wstETH余额不足，跳过存款'));
+                    console[_0x2db201(0x10a)](chalk[_0x2db201(0x128)]('Insufficient wstETH balance, skipping deposit'));
                 }
-                await new Promise(_0x349347 => setTimeout(_0x349347, 0x7530));
+                await new Promise(_0x349347 => setTimeout(_0x349347, 0x7530)); // Existing 30 seconds delay between wallets
             } catch (_0x3f8d6f) {
-                console[_0x2db201(0xa5)](chalk[_0x2db201(0x11f)]('钱包处理失败: ' + _0x3f8d6f[_0x2db201(0xb5)]));
+                console[_0x2db201(0xa5)](chalk[_0x2db201(0x11f)]('Wallet processing failed: ' + _0x3f8d6f[_0x2db201(0xb5)]));
             }
         }
     } catch (_0x2a0039) {
-        console['error'](chalk[_0x2db201(0x11f)]('初始化失败: ' + _0x2a0039[_0x2db201(0xb5)]));
+        console['error'](chalk[_0x2db201(0x11f)]('Initialization failed: ' + _0x2a0039[_0x2db201(0xb5)]));
         process[_0x2db201(0xfc)](0x1);
     }
 }
@@ -295,11 +319,11 @@ async function processWallets() {
         await processWallets();
         setInterval(async () => {
             const _0x10dc55 = _0x71dd;
-            console[_0x10dc55(0x10a)](chalk['cyan']['bold']('\n在 ' + new Date()[_0x10dc55(0xd7)]() + ' 重启进程'));
+            console[_0x10dc55(0x10a)](chalk['cyan']['bold']('\nRestarting process at ' + new Date()[_0x10dc55(0xd7)]()));
             await processWallets();
         }, 0x8 * 0x3c * 0x3c * 0x3e8);
     } catch (_0x4a66f1) {
-        console[_0x5990ed(0xa5)](chalk['red']('严重错误: ' + _0x4a66f1[_0x5990ed(0xb5)]));
+        console[_0x5990ed(0xa5)](chalk['red']('Critical error: ' + _0x4a66f1[_0x5990ed(0xb5)]));
         process[_0x5990ed(0xfc)](0x1);
     }
 })();
