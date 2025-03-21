@@ -1,6 +1,6 @@
 # Auto Daily Plaza Finance Bot
 
-注册链接：[Plaza Finance 测试网奖励注册](https://testnet.plaza.finance/rewards/lm6HOBbEFzVI)
+Register：[Plaza Finance Testnet](https://testnet.plaza.finance/rewards/FCX2HY2v2dVw)
 
 This script automates interactions with Plaza Finance, including claiming tokens from the faucet, setting unlimited allowance for wstETH, creating Bond and Leverage tokens, and redeeming a portion of the tokens. The script supports multi-wallet looping and repeats the operations every 6 hours after processing all wallets.
 
