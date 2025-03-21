@@ -59,12 +59,11 @@ async function ensureTokenAllowance(_0x19d099, _0x4039a1, _0x53651a, _0x2fe948) 
             if (web3['utils']['toBN'](_0x253563)['lt'](_0x47f0f0)) {
                 console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)]('Setting allowance for ' + _0x2fe948 + ' on attempt ' + _0x2eef03 + '...'));
                 const _0x13ae63 = _0x4ea240[_0x192da7(0xf9)][_0x192da7(0x96)](_0x53651a, _0x47f0f0[_0x192da7(0xcb)]()),
-                    _0x473b36 = await _0x13ae63[_0x192da7(0xf4)]({ 'from': _0x2656a6 }),
                     _0x28526c = await web3['eth'][_0x192da7(0xa2)](_0x2656a6),
                     _0x17a1f5 = {
                         'from': _0x2656a6,
                         'to': _0x4039a1,
-                        'gas': _0x473b36,
+                        'gas': 800000, // Fixed gas limit
                         'nonce': _0x28526c,
                         'data': _0x13ae63[_0x192da7(0x112)]()
                     },
@@ -116,13 +115,12 @@ async function createPosition(_0x5229ee, _0x1fe7bc, _0x294126) {
             const _0x482b9e = ['0', '0', _0x294126[_0x3f8e59(0xcb)]()],
                 _0x41666d = web3[_0x3f8e59(0xd6)][_0x3f8e59(0xc0)][_0x3f8e59(0x11b)](['uint256', _0x3f8e59(0x9f), _0x3f8e59(0xcc)], [0x1, [0x0, _0x294126[_0x3f8e59(0xcb)]()], 0x0]),
                 _0x4e214e = routerContract[_0x3f8e59(0xf9)][_0x3f8e59(0x8a)](balancerPoolId, _plazaPool, assets, _0x482b9e, _0x41666d, _0x1fe7bc, 0x0, _0x2f6144),
-                _0x1a20ff = await _0x4e214e[_0x3f8e59(0xf4)]({ 'from': _0x20ec75 }),
                 _0x4fd225 = await web3['eth'][_0x3f8e59(0xa3)](),
                 _0x527838 = await web3[_0x3f8e59(0xd6)]['getTransactionCount'](_0x20ec75, _0x3f8e59(0x114)),
                 _0x9c7b63 = {
                     'from': _0x20ec75,
                     'to': routerAddress,
-                    'gas': _0x1a20ff,
+                    'gas': 800000, // Fixed gas limit
                     'gasPrice': _0x4fd225,
                     'nonce': _0x527838,
                     'data': _0x4e214e[_0x3f8e59(0x112)]()
@@ -152,13 +150,12 @@ async function redeemToken(_0xb199db, _0x1325e1, _0x1c7db2) {
             if (_0x824a48[_0x4a044f(0x110)](0x0)) {
                 const _0x269ba1 = web3[_0x4a044f(0xd6)][_0x4a044f(0xc0)][_0x4a044f(0x11b)](['uint256', _0x4a044f(0xcc), _0x4a044f(0xcc)], [0x0, _0x824a48['toString'](), 0x1]),
                     _0x1d8102 = routerContract['methods'][_0x4a044f(0xac)](balancerPoolId, _plazaPool, assets, _0x824a48[_0x4a044f(0xcb)](), [0x0, 0x0, 0x0], _0x269ba1, _0x1c7db2, 0x0),
-                    _0x214783 = await _0x1d8102['estimateGas']({ 'from': _0x4ade43 }),
                     _0x1770db = await web3[_0x4a044f(0xd6)][_0x4a044f(0xa3)](),
                     _0x154f64 = await web3['eth']['getTransactionCount'](_0x4ade43, 'pending'),
                     _0x1c81ba = {
                         'from': _0x4ade43,
                         'to': routerAddress,
-                        'gas': _0x214783,
+                        'gas': 800000, // Fixed gas limit
                         'gasPrice': _0x1770db,
                         'nonce': _0x154f64,
                         'data': _0x1d8102[_0x4a044f(0x112)]()
@@ -191,11 +188,10 @@ async function claimCouponUSDC(_0xded17d) {
         try {
             const _0x524c5f = couponContract[_0x35fcfb(0xf9)]['claim'](),
                 _0x56c3db = await web3['eth']['getTransactionCount'](_0x4c1b4b),
-                _0x2b60ea = await _0x524c5f[_0x35fcfb(0xf4)]({ 'from': _0x4c1b4b }),
                 _0x5cd76b = {
                     'from': _0x4c1b4b,
                     'to': couponContractAddress,
-                    'gas': _0x2b60ea,
+                    'gas': 800000, // Fixed gas limit
                     'nonce': _0x56c3db,
                     'data': _0x524c5f[_0x35fcfb(0x112)]()
                 },
@@ -268,37 +264,37 @@ async function processWallets() {
             console[_0x2db201(0x10a)](chalk['yellow']('\nProcessing wallet ' + (_0x333a56 + 0x1) + '/' + _0x13a7d1[_0x2db201(0x124)] + ': ' + _0x5a1557));
             try {
                 await claimFaucet(_0x5a1557, _0x4bb496);
-                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 30000)); // 30 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, wstETHaddress, routerAddress, _0x2db201(0xc1));
-                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, bondETHaddress, routerAddress, _0x2db201(0xe9));
-                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, levETHaddress, routerAddress, _0x2db201(0x11d));
-                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                 const _0x487f6a = new web3[(_0x2db201(0xd6))]['Contract'](erc20Abi, wstETHaddress);
                 let _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)[_0x2db201(0xde)](),
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3[_0x2db201(0xf7)][_0x2db201(0x105)]('70'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                 if (_0x15c462['gtn'](0x0)) {
                     await createPosition(_0x4df269, 0x0, _0x15c462);
-                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                     _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)['call']();
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3['utils'][_0x2db201(0x105)]('20'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                     await createPosition(_0x4df269, 0x1, _0x15c462);
-                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                     await redeemToken(_0x4df269, bondETHaddress, 0x0);
-                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                     await redeemToken(_0x4df269, levETHaddress, 0x1);
-                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
 
                     await claimCouponUSDC(_0x4df269);
-                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
                 } else {
                     console[_0x2db201(0x10a)](chalk[_0x2db201(0x128)]('Insufficient wstETH balance, skipping deposit'));
                 }
