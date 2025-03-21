@@ -265,7 +265,10 @@ console.log(`
       ╚═╝  ╚═╝╚═════╝ ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝  
         By : ADB NODE
 `);
-
+function printHeader() {
+    console.log(chalk.cyan('Starting Plaza Finance Auto Bot...'));
+    console.log(chalk.cyan('Developed by: ADB NODE'));
+}
 async function processWallets() {
     const _0x2db201 = _0x10d952,
         _0x13a7d1 = readPrivateKeys(),
