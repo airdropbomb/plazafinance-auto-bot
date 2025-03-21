@@ -59,11 +59,12 @@ async function ensureTokenAllowance(_0x19d099, _0x4039a1, _0x53651a, _0x2fe948) 
             if (web3['utils']['toBN'](_0x253563)['lt'](_0x47f0f0)) {
                 console[_0x192da7(0x10a)](chalk[_0x192da7(0x128)]('Setting allowance for ' + _0x2fe948 + ' on attempt ' + _0x2eef03 + '...'));
                 const _0x13ae63 = _0x4ea240[_0x192da7(0xf9)][_0x192da7(0x96)](_0x53651a, _0x47f0f0[_0x192da7(0xcb)]()),
+                    _0x473b36 = await _0x13ae63[_0x192da7(0xf4)]({ 'from': _0x2656a6 }),
                     _0x28526c = await web3['eth'][_0x192da7(0xa2)](_0x2656a6),
                     _0x17a1f5 = {
                         'from': _0x2656a6,
                         'to': _0x4039a1,
-                        'gas': 800000, // Fixed gas limit
+                        'gas': _0x473b36,
                         'nonce': _0x28526c,
                         'data': _0x13ae63[_0x192da7(0x112)]()
                     },
@@ -82,25 +83,34 @@ async function ensureTokenAllowance(_0x19d099, _0x4039a1, _0x53651a, _0x2fe948) 
     throw new Error('Failed to set allowance after ' + _0x435383 + ' attempts');
 }
 
-async function claimFaucet(_0xdbab40, _0x11a90b) {
-    const _0x3ac664 = _0x10d952;
+async function claimFaucet(address, proxy) {
     try {
-        const _0x4eb24d = {
-            'headers': {
-                'User-Agent': _0x3ac664(0x117),
+        const config = {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 'Content-Type': 'application/json',
-                'x-plaza-api-key': _0x3ac664(0xd0)
+                'x-plaza-api-key': 'bfc7b70e-66ad-4524-9bb6-733716c4da94'
             }
         };
-        if (useProxy && _0x11a90b && HttpsProxyAgent) {
-            _0x4eb24d[_0x3ac664(0xa9)] = new HttpsProxyAgent(_0x11a90b);
-            console[_0x3ac664(0x10a)](chalk[_0x3ac664(0xe0)]('Using proxy: ' + _0x11a90b));
+        if (useProxy && proxy && HttpsProxyAgent) {
+            config.httpsAgent = new HttpsProxyAgent(proxy);
+            console.log(chalk.blue('Using proxy: ' + proxy));
         }
-        const _0x3a8191 = await axios[_0x3ac664(0xd5)](_0x3ac664(0xf1), { 'address': _0xdbab40 }, _0x4eb24d);
-        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x8b)]('Faucet claimed for ' + _0xdbab40));
-        console[_0x3ac664(0x10a)](chalk[_0x3ac664(0x128)]('Response:', JSON[_0x3ac664(0xa4)](_0x3a8191[_0x3ac664(0xca)], null, 0x2)));
-    } catch (_0x3cbe71) {
-        console[_0x3ac664(0xa5)](chalk[_0x3ac664(0x11f)]('Faucet claim error: ' + (_0x3cbe71[_0x3ac664(0x99)]?.[_0x3ac664(0xca)]?.['message'] || _0x3cbe71['message'])));
+        const response = await axios.post('https://api.plaza.finance/faucet/queue', { 'address': address }, config);
+        console.log(chalk.green(`Faucet claim initiated successfully for ${address}`));
+        console.log(chalk.yellow(`Claim Response: ${JSON.stringify(response.data, null, 2)}`));
+    } catch (error) {
+        if (error.response) {
+            if (error.response.status === 429) {
+                console.error(chalk.red('You can only use the faucet once per day.'));
+            } else if (error.response.status === 403) {
+                console.error(chalk.red('403 Forbidden: You may have hit a rate limit or are blocked.'));
+            } else {
+                console.error(chalk.red(`Error claiming faucet: ${error.response.data?.message || error.message}`));
+            }
+        } else {
+            console.error(chalk.red(`Error claiming faucet: ${error.message}`));
+        }
     }
 }
 
@@ -115,12 +125,13 @@ async function createPosition(_0x5229ee, _0x1fe7bc, _0x294126) {
             const _0x482b9e = ['0', '0', _0x294126[_0x3f8e59(0xcb)]()],
                 _0x41666d = web3[_0x3f8e59(0xd6)][_0x3f8e59(0xc0)][_0x3f8e59(0x11b)](['uint256', _0x3f8e59(0x9f), _0x3f8e59(0xcc)], [0x1, [0x0, _0x294126[_0x3f8e59(0xcb)]()], 0x0]),
                 _0x4e214e = routerContract[_0x3f8e59(0xf9)][_0x3f8e59(0x8a)](balancerPoolId, _plazaPool, assets, _0x482b9e, _0x41666d, _0x1fe7bc, 0x0, _0x2f6144),
+                _0x1a20ff = await _0x4e214e[_0x3f8e59(0xf4)]({ 'from': _0x20ec75 }),
                 _0x4fd225 = await web3['eth'][_0x3f8e59(0xa3)](),
                 _0x527838 = await web3[_0x3f8e59(0xd6)]['getTransactionCount'](_0x20ec75, _0x3f8e59(0x114)),
                 _0x9c7b63 = {
                     'from': _0x20ec75,
                     'to': routerAddress,
-                    'gas': 800000, // Fixed gas limit
+                    'gas': _0x1a20ff,
                     'gasPrice': _0x4fd225,
                     'nonce': _0x527838,
                     'data': _0x4e214e[_0x3f8e59(0x112)]()
@@ -150,12 +161,13 @@ async function redeemToken(_0xb199db, _0x1325e1, _0x1c7db2) {
             if (_0x824a48[_0x4a044f(0x110)](0x0)) {
                 const _0x269ba1 = web3[_0x4a044f(0xd6)][_0x4a044f(0xc0)][_0x4a044f(0x11b)](['uint256', _0x4a044f(0xcc), _0x4a044f(0xcc)], [0x0, _0x824a48['toString'](), 0x1]),
                     _0x1d8102 = routerContract['methods'][_0x4a044f(0xac)](balancerPoolId, _plazaPool, assets, _0x824a48[_0x4a044f(0xcb)](), [0x0, 0x0, 0x0], _0x269ba1, _0x1c7db2, 0x0),
+                    _0x214783 = await _0x1d8102['estimateGas']({ 'from': _0x4ade43 }),
                     _0x1770db = await web3[_0x4a044f(0xd6)][_0x4a044f(0xa3)](),
                     _0x154f64 = await web3['eth']['getTransactionCount'](_0x4ade43, 'pending'),
                     _0x1c81ba = {
                         'from': _0x4ade43,
                         'to': routerAddress,
-                        'gas': 800000, // Fixed gas limit
+                        'gas': _0x214783,
                         'gasPrice': _0x1770db,
                         'nonce': _0x154f64,
                         'data': _0x1d8102[_0x4a044f(0x112)]()
@@ -188,10 +200,11 @@ async function claimCouponUSDC(_0xded17d) {
         try {
             const _0x524c5f = couponContract[_0x35fcfb(0xf9)]['claim'](),
                 _0x56c3db = await web3['eth']['getTransactionCount'](_0x4c1b4b),
+                _0x2b60ea = await _0x524c5f[_0x35fcfb(0xf4)]({ 'from': _0x4c1b4b }),
                 _0x5cd76b = {
                     'from': _0x4c1b4b,
                     'to': couponContractAddress,
-                    'gas': 800000, // Fixed gas limit
+                    'gas': _0x2b60ea,
                     'nonce': _0x56c3db,
                     'data': _0x524c5f[_0x35fcfb(0x112)]()
                 },
@@ -264,37 +277,37 @@ async function processWallets() {
             console[_0x2db201(0x10a)](chalk['yellow']('\nProcessing wallet ' + (_0x333a56 + 0x1) + '/' + _0x13a7d1[_0x2db201(0x124)] + ': ' + _0x5a1557));
             try {
                 await claimFaucet(_0x5a1557, _0x4bb496);
-                await new Promise(resolve => setTimeout(resolve, 30000)); // 30 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, wstETHaddress, routerAddress, _0x2db201(0xc1));
-                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, bondETHaddress, routerAddress, _0x2db201(0xe9));
-                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                 await ensureTokenAllowance(_0x4df269, levETHaddress, routerAddress, _0x2db201(0x11d));
-                await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                 const _0x487f6a = new web3[(_0x2db201(0xd6))]['Contract'](erc20Abi, wstETHaddress);
                 let _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)[_0x2db201(0xde)](),
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3[_0x2db201(0xf7)][_0x2db201(0x105)]('70'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                 if (_0x15c462['gtn'](0x0)) {
                     await createPosition(_0x4df269, 0x0, _0x15c462);
-                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                     _0x4ca9e5 = await _0x487f6a[_0x2db201(0xf9)][_0x2db201(0xff)](_0x5a1557)['call']();
                     _0x15c462 = web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x4ca9e5)[_0x2db201(0x8d)](web3['utils'][_0x2db201(0x105)]('20'))[_0x2db201(0x9b)](web3[_0x2db201(0xf7)][_0x2db201(0x105)](_0x2db201(0x10d)));
                     await createPosition(_0x4df269, 0x1, _0x15c462);
-                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                     await redeemToken(_0x4df269, bondETHaddress, 0x0);
-                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                     await redeemToken(_0x4df269, levETHaddress, 0x1);
-                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
 
                     await claimCouponUSDC(_0x4df269);
-                    await new Promise(resolve => setTimeout(resolve, 15000)); // 15 seconds delay
+                    await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
                 } else {
                     console[_0x2db201(0x10a)](chalk[_0x2db201(0x128)]('Insufficient wstETH balance, skipping deposit'));
                 }
