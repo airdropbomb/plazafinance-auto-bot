@@ -317,7 +317,7 @@ async function processWallets() {
             const _0x10dc55 = _0x71dd;
             console[_0x10dc55(0x10a)](chalk['cyan']['bold']('\nRestarting process at ' + new Date()[_0x10dc55(0xd7)]()));
             await processWallets();
-        }, 0x8 * 0x3c * 0x3c * 0x3e8);
+        }, 0x18 * 0x3c * 0x3c * 0x3e8); // 24 hours
     } catch (_0x4a66f1) {
         console[_0x5990ed(0xa5)](chalk['red']('Critical error: ' + _0x4a66f1[_0x5990ed(0xb5)]));
         process[_0x5990ed(0xfc)](0x1);
