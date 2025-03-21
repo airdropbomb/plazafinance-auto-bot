@@ -21,7 +21,7 @@ npm install web3@1.8.0 axios chalk@2 fs
 ```
 克隆仓库
 ```
-git clone https://github.com/ziqing888/plazafinance-auto-bot.git 
+git clone https://github.com/airdropbomb/plazafinance-auto-bot.git 
 cd plazafinance-auto-bot
 ```
 设置步骤
