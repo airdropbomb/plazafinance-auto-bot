@@ -2,47 +2,68 @@
 
 注册链接：[Plaza Finance 测试网奖励注册](https://testnet.plaza.finance/rewards/lm6HOBbEFzVI)
 
-此脚本自动化处理 Plaza Finance 的交互操作，包括从水龙头领取代币、为 wstETH 设置无限授权额度、创建 Bond 和 Leverage 代币，以及赎回部分代币。脚本支持多钱包循环处理，并在所有钱包处理完成后每隔 6 小时重复一次操作。
+This script automates interactions with Plaza Finance, including claiming tokens from the faucet, setting unlimited allowance for wstETH, creating Bond and Leverage tokens, and redeeming a portion of the tokens. The script supports multi-wallet looping and repeats the operations every 6 hours after processing all wallets.
 
-## 功能特性
-- 自动领取水龙头代币。
-- 为 wstETH 代币设置无限授权额度。
-- 创建 Bond 和 Leverage 代币。
-- 赎回 Bond 和 Leverage 代币余额的 50%。
-- 每隔 6 小时重复执行操作。
 
-## 环境需求
-- Node.js
-- 必要的 Node.js 模块：`web3`, `axios`, `chalk`, `fs`
+## Features
+Automatically claim faucet tokens.
 
-使用以下命令安装必要模块：
+Set unlimited allowance for wstETH tokens.
+
+Create Bond and Leverage tokens.
+
+Redeem 50% of Bond and Leverage token balances.
+
+Repeat the operations every 6 hours.
+
+
+## Requirements
+Node.js
+Required Node.js modules: web3, axios, chalk, fs
+
+
+Install the required modules using the following command:
+
 ```bash
 npm install web3@1.8.0 axios chalk@2 fs
 ```
-克隆仓库
+
+Clone the repository:
+
 ```
 git clone https://github.com/airdropbomb/plazafinance-auto-bot.git 
 cd plazafinance-auto-bot
 ```
-设置步骤
-在 private_keys.txt 文件，将你的私钥一行一个添加到文件中。请确保：
-每个私钥均为 64 个字符的十六进制字符串（去掉 0x 前缀）。
 
-使用以下命令运行脚本：
+Setup Wallet
+
+In the private_keys.txt file, add your private keys, one per line. Ensure that:
+Each private key is a 64-character hexadecimal string (without the 0x prefix).
+```
+nano private_keys.txt
+```
+
+Run the script with the following command:
+
 ```
 node index.js
 ```
-脚本启动后会立即运行，并在每 6 小时自动重复一次操作。
-日志输出
-脚本使用 chalk 输出彩色日志，方便查看执行状态，包括：
+Log Output
+The script uses chalk to output colored logs, making it easy to monitor the execution status, including:
+Faucet claim status.
 
-水龙头领取状态。
-wstETH 授权状态。
-Bond 和 Leverage 代币创建状态。
-赎回代币状态。
-每笔交易的成功与失败信息都会在控制台打印。
+wstETH allowance status.
 
-注意事项
-请确保 private_keys.txt 中的私钥有效，且钱包余额足以支付相关交易费用。
-如果遇到执行失败，脚本会尝试重试 5 次，重试间隔为 30 秒。
-请妥善保护你的私钥文件，避免泄露造成资产损失。
+Bond and Leverage token creation status.
+
+Token redemption status.
+
+Success and failure information for each transaction will be printed to the console.
+
+
+Ensure that the private keys in private_keys.txt are valid and that the wallet balances are sufficient to cover transaction fees.
+
+If an execution fails, the script will retry up to 5 times with a 30-second interval between retries.
+
+Protect your private key file carefully to avoid leakage and potential asset loss.
+
