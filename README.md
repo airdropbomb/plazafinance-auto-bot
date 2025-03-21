@@ -21,18 +21,17 @@ Repeat the operations every 6 hours.
 Node.js
 Required Node.js modules: web3, axios, chalk, fs
 
-
-Install the required modules using the following command:
-
-```bash
-npm install web3@1.8.0 axios chalk fs https-proxy-agent
-```
-
 Clone the repository:
 
 ```
 git clone https://github.com/airdropbomb/plazafinance-auto-bot.git 
 cd plazafinance-auto-bot
+```
+
+Install the required modules using the following command:
+
+```bash
+npm install web3@1.8.0 axios chalk fs https-proxy-agent
 ```
 
 Setup Wallet
